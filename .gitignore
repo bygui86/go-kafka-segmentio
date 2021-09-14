@@ -53,9 +53,3 @@ Thumbs.db
 
 ########### Go coverage tool output
 *.out
-
-
-
-###################### Custom ###################
-
-go-segmentio-stats
