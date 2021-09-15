@@ -3,6 +3,7 @@ module github.com/bygui86/go-kafka-segmentio/writer
 go 1.17
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.11.0
 	github.com/segmentio/kafka-go v0.4.18

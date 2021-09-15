@@ -1,0 +1,7 @@
+
+########### Project specific
+
+./consumer-logger/consumer-logger
+./consumer-mongo-db/consumer-mongo-db
+./producer-api/producer-api
+./producer-random/producer-random

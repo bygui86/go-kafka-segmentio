@@ -18,7 +18,6 @@ type KafkaWriter struct {
 
 type Config struct {
 	kafkaBrokers []string
-	kafkaPort    int
 	kafkaTopic   string
 	kafkaAsync   bool
 }

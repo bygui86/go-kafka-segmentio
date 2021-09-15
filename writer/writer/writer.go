@@ -3,9 +3,8 @@ package writer
 import (
 	"time"
 
-	"github.com/segmentio/kafka-go"
-
 	"github.com/bygui86/go-kafka-segmentio/writer/logging"
+	"github.com/segmentio/kafka-go"
 )
 
 func New(producerName string) (*KafkaWriter, error) {
@@ -14,9 +13,14 @@ func New(producerName string) (*KafkaWriter, error) {
 	cfg := loadConfig()
 
 	writer := &kafka.Writer{
-		// Addr:  kafka.TCP(cfg.kafkaBrokers...),
-		Addr:  kafka.TCP("localhost:9092"),
+		Addr: kafka.TCP(cfg.kafkaBrokers...),
+		// Addr:  kafka.TCP(cfg.kafkaBrokers[0]),
+
 		Topic: cfg.kafkaTopic,
+
+		// Balancer: &kafka.LeastBytes{},
+		// Balancer: &kafka.RoundRobin{},
+
 		// Async: cfg.kafkaAsync,
 	}
 
@@ -33,19 +37,47 @@ func New(producerName string) (*KafkaWriter, error) {
 func (p *KafkaWriter) Start() {
 	logging.Log.Info("Start kafka writer")
 
+	// VERSION 1 - OK
+	// startWriterV1(p.cfg.kafkaBrokers[0], p.cfg.kafkaTopic)
+
+	// VERSION 2 - OK
+	// p.startWriterV2()
+
+	// VERSION 3 - OK
+	// p.startWriterV3()
+
+	// VERSION 4 - OK
+	// if p.writer != nil {
+	// 	go p.startWriterV4()
+	// 	p.running = true
+	// 	logging.Log.Info("Kafka writer started")
+	// 	return
+	// }
+	// logging.Log.Error("Kafka writer start failed: writer not initialized or already running")
+
+	// VERSION 5 - OK
+	// if p.writer != nil {
+	// 	go p.startWriterV5()
+	// 	p.running = true
+	// 	logging.Log.Info("Kafka writer started")
+	// 	return
+	// }
+	// logging.Log.Error("Kafka writer start failed: writer not initialized or already running")
+
+	// VERSION FINAL - OK
 	if p.writer != nil {
-		go p.startWriter()
+		go p.startWriterFinal()
 		p.running = true
 		logging.Log.Info("Kafka writer started")
 		return
 	}
-
 	logging.Log.Error("Kafka writer start failed: writer not initialized or already running")
 }
 
 func (p *KafkaWriter) Shutdown(timeout int) {
 	logging.SugaredLog.Warnf("Shutdown kafka writer, timeout %d", timeout)
 
+	// VERSION FINAL - OK
 	p.ticker.Stop()
 	p.stop <- true
 	time.Sleep(time.Duration(timeout) * time.Second)

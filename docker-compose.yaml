@@ -1,0 +1,62 @@
+# http://wurstmeister.github.io/kafka-docker/
+# start
+#   1. docker swarm init
+#   2. docker stack deploy kafka -c docker-compose.yaml
+# stop
+#   1. docker stack rm kafka
+#   2. sleep 30 # to give the time to all stacks to end properly
+#   3. docker swarm leave --force
+
+version: "3.8"
+services:
+
+  zookeeper:
+    hostname: zookeeper
+    image: wurstmeister/zookeeper:3.4.6
+    ports:
+      - "2181:2181"
+  
+  kafka:
+#    image: wurstmeister/kafka:2.12-2.3.0
+    image: wurstmeister/kafka:2.12-2.3.1
+#    image: wurstmeister/kafka:2.12-2.4.0
+#    image: wurstmeister/kafka:2.12-2.4.1
+#    image: wurstmeister/kafka:2.12-2.5.0
+#    image: wurstmeister/kafka:2.13-2.6.0
+#    image: wurstmeister/kafka:2.13-2.7.0
+#    image: wurstmeister/kafka
+    env_file:
+      - kafka-variables.env
+    ports:
+      - "9092:9092"
+      - "8082:8082"
+      - "8083:8083"
+
+  writer:
+    image: bygui86/kafka-segmentio-writer:v1.1.0
+    environment:
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_TOPIC: topic1
+#      KAFKA_TOPIC: my.topic
+
+#  producer-random:
+#    image: bygui86/segmentio-producer-random:v1.0.0
+#    environment:
+#      kafkaURL: kafka:9092
+#      topic: topic1
+
+  reader:
+    image: bygui86/kafka-segmentio-reader:v1.0.0
+    environment:
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_TOPIC: topic1
+#      KAFKA_TOPIC: my.topic
+      KKAFKA_TOPICAFKA_CONSUMER_GROUP: logger-group
+#      KKAFKA_TOPICAFKA_CONSUMER_GROUP: my-group
+
+#  consumer-logger:
+#    image: bygui86/segmentio-consumer-logger:v1.0.0
+#    environment:
+#      kafkaURL: kafka:9092
+#      topic: topic1
+#      GroupID: logger-group
